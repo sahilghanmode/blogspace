@@ -1,6 +1,7 @@
 import './App.css'
 import { BrowserRouter, Routes, Route } from 'react-router-dom'
 import Home from './pages/Home/Home'
+import ArticlePage from './pages/ArticlePage/ArticlePage'
 
 function App() {
 
@@ -8,6 +9,7 @@ function App() {
     <BrowserRouter>
       <Routes>
         <Route path='/' element={<Home/>}/>
+        <Route path='/:articleSlug' element={<ArticlePage/>}></Route>
       </Routes>
     </BrowserRouter>
   )

@@ -1,5 +1,6 @@
 import React from 'react';
 import { Heart, MessageCircle, Bookmark, MoreHorizontal } from 'lucide-react';
+import { useNavigate } from 'react-router-dom';
 
 export default function ArticleCard({
   author,
@@ -12,8 +13,13 @@ export default function ArticleCard({
   comments,
   topic,
 }) {
+  const articleSlug=title.toLowerCase()
+    .replace(/[^a-z0-9\s]/g, '')
+    .replace(/\s+/g, '-');
+
+  const navigate=useNavigate()
   return (
-    <article className="py-8 border-b border-gray-200 hover:bg-gray-50 transition-colors cursor-pointer">
+    <article className="py-8 border-b border-gray-200 hover:bg-gray-50 transition-colors cursor-pointer" onClick={()=>navigate(`/${articleSlug}`)}>
       <div className="flex items-start space-x-4">
         <div className="flex-1">
           {/* Author info */}
