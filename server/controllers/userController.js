@@ -42,11 +42,13 @@ export const login=async(req,res)=>{
             return res.status(400).json({success:false,message:"Password does not match"})
         }
 
-        res.cookie("authToken",createToken(email, user.id),{
+        res.cookie("authToken",createToken(user.email, user.id),{
             maxAge,
             secure:true,
             sameSite:"None"
         })
+
+        return res.status(200).json({success:true, message:"user is logged in successfully", user})
 
 
         
@@ -76,7 +78,7 @@ export const sendOtp=async(req,res)=>{
         await user.save()
 
         const mailOptions = {
-            from: 'thorsthorkel@gmail.com',
+            from: `"BlogSpace" <${process.env.EMAIL_USER}>`,
             to: email,
             subject: 'Your OTP Verification Code',
             html: `
@@ -202,9 +204,63 @@ export const forgotPassword=async(req,res)=>{
             return res.status(400).json({success:false,message:"Email is required"})
         }
 
+        const user=await User.findOne({email})
+        if(!user){
+            return res.status(400).json({success:false, message:"User not found"})
+        }
+
+        const resetToken=jwt.sign({id:user._id},process.env.JWT_SECRET,{expiresIn:"1h"})
+
+        const resetLink=`${process.env.CORS_ORIGIN}/reset-password/${resetToken}`
+
+        await transporter.sendMail({
+            from: `"BlogSpace" <${process.env.EMAIL_USER}>`,
+            to: user.email,
+            subject: "Password Reset Request",
+            html: `
+                <p>Hello ${user.username || 'user'},</p>
+                <p>Click the link below to reset your password:</p>
+                <a href="${resetLink}">${resetLink}</a>
+                <p>This link will expire in 1 hour.</p>
+            `
+        });
+
+        return res.status(200).json({success:true, message:"password resent link sent successfully"})
          
     } catch (error) {
         console.log("error in forgot password controller",{error})
+        return res.status(500).json({success:false, message:"Internal Server Error"})
+    }
+}
+
+export const resetPassword=async(req,res)=>{
+    try {
+        
+        const {resetToken}=req.params
+        const {password}=req.body
+
+        if(!resetToken){
+            return res.status(400).json({success:false, message:"Token is missing"})
+        }
+        if(!password || password.length<8){
+            return res.status(400).json({success:false, message:"password must be 8 characters long"})
+        }
+
+        const decoded=jwt.verify(resetToken,process.env.JWT_SECRET)
+        const userId=decoded.id
+
+        const user=await User.findById(userId)
+        if(!user){
+            return res.status(400).json({success:false, message:"User not found"})
+        }
+
+        user.password=password;
+        user.save()
+
+        return res.status(200).json({success:true, message:"Password updated successfully"})
+
+    } catch (error) {
+        console.log("error in resetPassword controller",{error})
         return res.status(500).json({success:false, message:"Internal Server Error"})
     }
 }
