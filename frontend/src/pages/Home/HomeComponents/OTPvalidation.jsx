@@ -1,6 +1,9 @@
 import React,{useRef, useState} from 'react'
+import { axiosInstance } from '../../../../utils/axios.js'
+import toast from 'react-hot-toast'
+import {useDispatch} from "redux-toolkit"
 
-const OTPvalidation = ({ isOpen, formData }) => {
+const OTPvalidation = ({ isOpen,onClose, formData }) => {
 
     if (!isOpen) return null
 
@@ -63,15 +66,20 @@ const OTPvalidation = ({ isOpen, formData }) => {
         setError("")
 
         try {
-            // Simulate API call
-            await new Promise((resolve) => setTimeout(resolve, 2000))
+            const email=formData.email
+            const res=await axiosInstance.post('/user/verify',{email,otp:otpString})
+            console.log("Verifying OTP:", res.data.user)
 
-            // Here you would typically verify the OTP with your backend
-            console.log("Verifying OTP:", otpString)
-
-            // For demo purposes, accept any 6-digit code
-            alert("OTP verified successfully!")
+            if(res.data.success){
+                toast.success("OTP verified successfully!")
+                onClose
+            }
+            else{
+                toast.error(res.data.message)
+            }
+            
         } catch (err) {
+            toast.error({error})
             setError("Invalid verification code. Please try again.")
         } finally {
             setIsLoading(false)

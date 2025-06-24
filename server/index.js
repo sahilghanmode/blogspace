@@ -3,6 +3,7 @@ import dotenv from "dotenv"
 import userRoutes from "./routes/user.route.js";
 import mongoose from "mongoose"
 import cors from "cors"
+import blogRoute from "./routes/blogRoute.js";
 
 
 const app=express();
@@ -19,6 +20,8 @@ app.use(cors({
 }))
 
 app.use('/api/user',(userRoutes))
+
+app.use('/api/blog',blogRoute)
 
 app.listen(port,()=>{console.log(`port running on ${port}`)})
 

@@ -2,7 +2,7 @@ import React, { useState } from 'react'
 import { X, Mail, Lock, User, Eye, EyeOff } from 'lucide-react';
 import { signupApi } from '../../../../apis/authApis';
 
-const SignupSignIn = ({isOpen, onClose,mode,setMode,setFormData,formData}) => {
+const SignupSignIn = ({isOpen, onClose,mode,setMode,setFormData,formData,setOtpvalidation}) => {
 
   if(!isOpen)return null
 
@@ -11,25 +11,34 @@ const SignupSignIn = ({isOpen, onClose,mode,setMode,setFormData,formData}) => {
   const [error,setError]=useState("")
   
 
-  const handleSubmit=async(e)=>{
-    e.preventDefault()
-    
-    try {
-      setIsLoading(true)
-      if(mode==='signup'){
-        signupApi(formData)
-    
-      }
-      
-    } catch (error) {
-      console.log({error})
-    } finally{
-      setIsLoading(false)
-    
-    }
-    
+  const handleSubmit = async (e) => {
+    e.preventDefault();
+    setError('');
+    setIsLoading(true);
 
-  }
+    try {
+      if (mode === 'signup') {
+        if (formData.password !== formData.confirmPassword) {
+          setError("Passwords do not match");
+          return;
+        }
+
+        const res = await signupApi(formData);
+
+        if (res === true) {
+          setOtpvalidation(true);
+          onClose();
+        } else if (res?.message) {
+          setError(res.message);
+        }
+      }
+    } catch (err) {
+      console.log(err);
+      setError("Something went wrong. Please try again.");
+    } finally {
+      setIsLoading(false);
+    }
+  };
 
   const handleInputChange=(e)=>{
     setFormData(prev=>({

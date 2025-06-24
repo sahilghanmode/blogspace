@@ -12,7 +12,7 @@ const blogSchema = new mongoose.Schema(
       required: [true, "Content is required"],
     },
     image: {
-      type: String, // URL to image (optional)
+      type: String, 
     },
     author: {
       type: mongoose.Schema.Types.ObjectId,

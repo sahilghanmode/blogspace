@@ -29,13 +29,11 @@ export default function Header() {
               <h1 className="text-2xl font-bold text-black">BlogSpace</h1>
             </div>
             <nav className="hidden md:flex space-x-6">
-              {/* <a href="#" className="text-gray-600 hover:text-black transition-colors">Home</a> */}
               <a href="#" className="text-gray-600 hover:text-black transition-colors">Following</a>
               <a href="#" className="text-gray-600 hover:text-black transition-colors">Topics</a>
             </nav>
           </div>
 
-          {/* Center - Search */}
           <div className="hidden md:flex flex-1 max-w-md mx-8">
             <div className="relative w-full">
               <Search className="absolute left-3 top-1/2 transform -translate-y-1/2 text-gray-400 w-4 h-4" />
@@ -47,7 +45,6 @@ export default function Header() {
             </div>
           </div>
 
-          {/* Right side - Actions */}
           <div className="flex items-center space-x-4">
             <button className="hidden md:flex items-center space-x-2 bg-green-600 hover:bg-green-700 text-white px-4 py-2 rounded-full transition-colors cursor-pointer">
               <Edit3 className="w-4 h-4" />
