@@ -17,6 +17,16 @@ const createToken = (email, userId) => {
     return jwt.sign({ email, userId }, process.env.JWT_SECRET, { expiresIn: maxAge })
 };
 
+export const getCurrentUser=async(req,res)=>{
+    try {
+        const user=req.user
+        return res.status(200).json(user)
+    } catch (error) {
+        console.log("error in get current user controller",{error})
+        return res.status(500).json({message:"Internal server error"})
+    }
+}
+
 export const login=async(req,res)=>{
     try {
 
@@ -183,10 +193,11 @@ export const Signup=async(req,res)=>{
         if(usernameAvailable){
             return res.status(409).json({success:false, message:"Username already exists"})
         }
-        const emailAvailable=await User.findOne({email})
-        if(emailAvailable){
-            return res.status(400).json({success:false, message:"Email is already in Use please log in"})
+        const emailNotAvailable=await User.findOne({email})
+        if(emailNotAvailable){
+            return res.status(409).json({success:false, message:"Email is already in Use please log in"})
         }
+    
         const user=await User.create({email,password, username})
         
         return res.status(200).json({success:true, user})

@@ -2,11 +2,23 @@ import React, { useState } from 'react';
 import { Search, Edit3, Bell, User } from 'lucide-react';
 import { useNavigate } from 'react-router-dom';
 import SignupSignIn from './SignupSignIn';
+import OTPvalidation from './OTPvalidation';
 
 export default function Header() {
 
   const navigate=useNavigate()
+
+  const [showSignupSignInModal, setShowSignupSignInModal]=useState(false)
   const [isAuthenticated,setIsAuthenticated]=useState(false)
+  const [mode,setMode]=useState('signin')
+  const [optvalidation,setOtpvalidation]=useState(false)
+  const [formData,setFormData]=useState({
+    username:"",
+    email:"sahilghanmode1903@gmail.com",
+    password:"",
+    confirmPassword:""
+  })
+
   return (
     <header className="bg-white border-b border-gray-200 sticky top-0 z-50">
       <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
@@ -53,13 +65,35 @@ export default function Header() {
             </div> 
             : 
             <div className='flex flex-col-2'>
-              <button className='text-gray-600 hover:text-black transition-colors cursor-pointer font-medium hover:underline'>
+              <button className='text-gray-600 hover:text-black transition-colors cursor-pointer font-medium hover:underline' onClick={()=>{
+                setMode('signup')
+                setShowSignupSignInModal(true)
+              }}>
                 SignUp/
               </button>
-              <button className='text-gray-600 hover:text-black transition-colors font-medium pl-0.5 cursor-pointer hover:underline'>
+              <button className='text-gray-600 hover:text-black transition-colors font-medium pl-0.5 cursor-pointer hover:underline' onClick={()=>{
+                setMode('signin')
+                setShowSignupSignInModal(true)
+              }}>
                 login
               </button>
             </div> }
+
+            <SignupSignIn 
+              isOpen={showSignupSignInModal}
+              onClose={()=>setShowSignupSignInModal(false)}
+              mode={mode}
+              setMode={setMode}
+              setOtpvalidation={setOtpvalidation}
+              formData={formData}
+              setFormData={setFormData}
+            />
+
+            <OTPvalidation 
+              isOpen={optvalidation}
+              onClose={()=>setOtpvalidation(false)}
+              formData={formData}
+            />
             
           </div>
         </div>
